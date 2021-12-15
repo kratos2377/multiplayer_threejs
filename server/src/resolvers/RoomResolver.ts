@@ -158,7 +158,11 @@ export class RoomResolver {
   }
 
   @Query(() => Boolean)
-  async getRoomStatus(): Promise<Boolean> {
+  async getRoomStatus(@Arg("roomCode") roomCode: string): Promise<Boolean> {
+    let room = (await Room.findOne({ where: { id: roomCode } })) as Room;
+
+    if (room.inGame) return false;
+
     return true;
   }
 }

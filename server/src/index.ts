@@ -68,6 +68,9 @@ const main = async () => {
 
   const port = process.env.PORT || 5000;
   app.listen(port, () => console.log("SERVER STARTED AT PORT " + port));
+  // const io = require("socket.io")(httpServer);
+  // console.log("THIS IS IO");
+  // console.log(io);
 };
 
 main().catch((err) => console.log(err));
