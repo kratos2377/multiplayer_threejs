@@ -148,7 +148,7 @@ export class RoomResolver {
       userId: userId,
       username: username,
     }).save();
-
+    await Room.update({ id: roomCode }, { users: room.users - 1 });
     return {
       response: {
         values: true,
@@ -163,6 +163,15 @@ export class RoomResolver {
 
     if (room.inGame) return false;
 
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async destroyRoomAndLobby(
+    @Arg("roomCode") roomCode: string
+  ): Promise<Boolean> {
+    await Room.delete({ id: roomCode });
+    await Lobby.delete({ roomId: roomCode });
     return true;
   }
 }

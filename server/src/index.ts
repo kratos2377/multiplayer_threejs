@@ -6,6 +6,9 @@ import { createBuildSchema } from "./utils/createSchema";
 import { ApolloServer } from "apollo-server-express";
 
 import cors from "cors";
+import { Lobby } from "./entity/Lobby";
+import { Room } from "./entity/Room";
+import { User } from "./entity/User";
 const main = async () => {
   dotenv.config();
 
@@ -16,7 +19,7 @@ const main = async () => {
     password: "postgres",
     logging: true,
     synchronize: true,
-    entities: [],
+    entities: [User, Lobby, Room],
     // extra: {
     //   ssl: {
     //     rejectUnauthorized: false,
