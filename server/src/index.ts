@@ -9,6 +9,12 @@ import cors from "cors";
 import { Lobby } from "./entity/Lobby";
 import { Room } from "./entity/Room";
 import { User } from "./entity/User";
+import { Socket } from "socket.io";
+
+interface ExtSocket extends Socket {
+  username: string;
+}
+
 const main = async () => {
   dotenv.config();
 
@@ -70,10 +76,21 @@ const main = async () => {
   apolloServer.applyMiddleware({ app, cors: false });
 
   const port = process.env.PORT || 5000;
-  app.listen(port, () => console.log("SERVER STARTED AT PORT " + port));
-  // const io = require("socket.io")(httpServer);
-  // console.log("THIS IS IO");
-  // console.log(io);
+  const httpServer = app.listen(port, () =>
+    console.log("SERVER STARTED AT PORT " + port)
+  );
+  const io = require("socket.io")(httpServer, {
+    cors: {
+      origin: ["https://localhost:3000"],
+    },
+  });
+  console.log("THIS IS IO");
+  console.log(io);
+  io.on("connection", function (socket: ExtSocket) {
+    socket.username = "adasas";
+    console.log(socket);
+    socket.emit("setId", { id: socket.id });
+  });
 };
 
 main().catch((err) => console.log(err));

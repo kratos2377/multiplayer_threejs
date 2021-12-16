@@ -4,9 +4,8 @@ import { BaseEntity, Column, Entity, PrimaryColumn } from "typeorm";
 @Entity()
 @ObjectType()
 export class Room extends BaseEntity {
-  @Field()
-  @PrimaryColumn()
-  @Column("text", { unique: true })
+  @Field(() => String)
+  @PrimaryColumn("text", { unique: true })
   id!: string;
 
   @Field()

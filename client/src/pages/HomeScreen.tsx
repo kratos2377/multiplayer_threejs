@@ -1,13 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Modal, Form, Container, Row } from "react-bootstrap";
 import Header from "../components/Header";
+import { io } from "socket.io-client";
 
 export const HomeScreen = () => {
   const [username, setUsername] = useState("");
   const [code, setCode] = useState("");
+  const [socketId, setSocketId] = useState("");
 
   const [openCreateRoomModal, setOpenCreateRoom] = useState(false);
   const [openJoinRoomModal, setOpenJoinRoom] = useState(false);
+  const socket = io("http://localhost:5000", {
+    transports: ["websocket", "polling", "flashsocket"],
+  });
 
   const changeCreateRoomStatus = () => setOpenCreateRoom(true);
   const changeJoinRoomStatus = () => setOpenJoinRoom(true);
@@ -20,8 +25,15 @@ export const HomeScreen = () => {
 
   const joinRoom = () => {};
 
+  useEffect(() => {
+    socket.on("setId", function (data) {
+      setSocketId(data.id);
+    });
+  }, []);
+
   return (
     <>
+      {console.log(socketId)}
       <Header />
       <h1 className="d-flex justify-content-center">Welcome to the game</h1>
       <div>
