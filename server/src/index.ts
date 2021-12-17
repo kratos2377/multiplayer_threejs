@@ -13,6 +13,12 @@ import { Socket } from "socket.io";
 
 interface ExtSocket extends Socket {
   username: string;
+  x: number;
+  y: number;
+  z: number;
+  roomCode: string;
+  healthPoints: number;
+  attackPoints: number;
 }
 
 const main = async () => {
@@ -84,12 +90,26 @@ const main = async () => {
       origin: ["https://localhost:3000"],
     },
   });
-  console.log("THIS IS IO");
-  console.log(io);
+  // console.log("THIS IS IO");
+  // console.log(io);
   io.on("connection", function (socket: ExtSocket) {
-    socket.username = "adasas";
-    console.log(socket);
     socket.emit("setId", { id: socket.id });
+    socket.on("init", function (data) {
+      socket.x = 0;
+      socket.y = 0;
+      socket.z = 0;
+      socket.username = data.username;
+      socket.roomCode = data.roomCode;
+    });
+
+    socket.on("gameStart", function (data) {
+      socket.healthPoints = data.healthPoints;
+      socket.attackPoints = data.attackPoints;
+    });
+
+    // socket.on("update" , function(data) {
+
+    // });
   });
 };
 
