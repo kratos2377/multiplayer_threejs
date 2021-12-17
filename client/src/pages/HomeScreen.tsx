@@ -1,16 +1,32 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Modal, Form, Container, Row } from "react-bootstrap";
+import { Button, Col, Modal, Form, Alert } from "react-bootstrap";
 import Header from "../components/Header";
+import {
+  useCreateRoomMutation,
+  useJoinRoomMutation,
+} from "../generated/graphql";
+import { RouteComponentProps } from "react-router-dom";
 import { socket } from "../services/socket.js";
+import {
+  GAME_IN_PROGRESS,
+  ROOM_DOES_NOT_EXIST,
+  ROOM_IS_FULL,
+  USERNAME_EXIST_IN_ROOM,
+} from "../constants";
 
-export const HomeScreen = () => {
+interface HomeScreenProps extends RouteComponentProps {}
+
+export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
   const [username, setUsername] = useState("");
   const [code, setCode] = useState("");
   const [socketId, setSocketId] = useState("");
+  const [error, setError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [openCreateRoomModal, setOpenCreateRoom] = useState(false);
   const [openJoinRoomModal, setOpenJoinRoom] = useState(false);
-
+  const [createRoomMutation] = useCreateRoomMutation();
+  const [joinRoomMutation] = useJoinRoomMutation();
   socket.on("setId", function (data) {
     setSocketId(data.id);
   });
@@ -22,9 +38,82 @@ export const HomeScreen = () => {
     setOpenJoinRoom(false);
   };
 
-  const createRoom = async () => {};
+  const createRoom = async () => {
+    setOpenCreateRoom(false);
+    setOpenJoinRoom(false);
 
-  const joinRoom = async () => {};
+    if (username.trim() === "" || username.length <= 4) {
+      setErrorMessage("Username Length must be greater than 4");
+      setError(true);
+      return;
+    }
+
+    const values = {
+      adminId: socketId,
+      username: username,
+    };
+    const response = await createRoomMutation({
+      variables: values,
+    });
+
+    var code1 = response?.data?.createRoom?.response?.code?.toString();
+
+    history.push("/game/:" + code1);
+  };
+
+  const joinRoom = async () => {
+    setOpenCreateRoom(false);
+    setOpenJoinRoom(false);
+
+    if (username.trim() === "" || username.length <= 4) {
+      setErrorMessage("Username Length must be greater than 4");
+      setError(true);
+      return;
+    }
+
+    const values = {
+      userId: socketId,
+      username: username,
+      roomCode: code,
+    };
+    const response = await joinRoomMutation({
+      variables: values,
+    });
+
+    if (!response?.data?.joinRoom?.response?.values) {
+      var errorDetected = response?.data?.joinRoom?.response?.error?.toString();
+
+      if (errorDetected === ROOM_DOES_NOT_EXIST) {
+        setErrorMessage("Room Doesn't Exist. Check it Again");
+        setError(true);
+        return;
+      }
+
+      if (errorDetected === ROOM_IS_FULL) {
+        setErrorMessage("Room is Full. Can't Enter");
+        setError(true);
+        return;
+      }
+
+      if (errorDetected === GAME_IN_PROGRESS) {
+        setErrorMessage("Game in Progress. Can't Enter now");
+        setError(true);
+        return;
+      }
+
+      if (errorDetected === USERNAME_EXIST_IN_ROOM) {
+        setErrorMessage(
+          "Someone is already using this username. Try a different one"
+        );
+        setError(true);
+        return;
+      }
+    }
+
+    setError(false);
+
+    history.push("/game/:" + code);
+  };
 
   return (
     <>
@@ -38,6 +127,14 @@ export const HomeScreen = () => {
           <Button onClick={changeJoinRoomStatus}>Join Room</Button>
         </Col>
       </div>
+
+      {error ? (
+        <Alert key="danger" variant="danger">
+          {errorMessage}
+        </Alert>
+      ) : (
+        <div></div>
+      )}
 
       <Modal show={openCreateRoomModal}>
         <Modal.Dialog>
@@ -59,7 +156,9 @@ export const HomeScreen = () => {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="primary">Create</Button>
+            <Button variant="primary" onClick={createRoom}>
+              Create
+            </Button>
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
@@ -98,7 +197,9 @@ export const HomeScreen = () => {
           </Modal.Body>
 
           <Modal.Footer>
-            <Button variant="primary">Join Room</Button>
+            <Button variant="primary" onClick={joinRoom}>
+              Join Room
+            </Button>
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>

@@ -174,4 +174,17 @@ export class RoomResolver {
     await Lobby.delete({ roomId: roomCode });
     return true;
   }
+
+  @Query(() => Room, { nullable: true })
+  async getRoomDetails(
+    @Arg("roomCode") roomCode: string
+  ): Promise<Room | null> {
+    const room = (await Room.findOne({ where: { id: roomCode } })) as Room;
+
+    if (!room) {
+      return null;
+    }
+
+    return room;
+  }
 }

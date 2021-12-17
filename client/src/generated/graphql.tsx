@@ -55,13 +55,27 @@ export type MutationJoinRoomArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getRoomDetails?: Maybe<Room>;
   getRoomStatus: Scalars['Boolean'];
   hello: Scalars['String'];
 };
 
 
+export type QueryGetRoomDetailsArgs = {
+  roomCode: Scalars['String'];
+};
+
+
 export type QueryGetRoomStatusArgs = {
   roomCode: Scalars['String'];
+};
+
+export type Room = {
+  __typename?: 'Room';
+  adminSocketId: Scalars['String'];
+  id: Scalars['String'];
+  inGame: Scalars['Boolean'];
+  users: Scalars['Float'];
 };
 
 export type RoomResponse = {
@@ -84,6 +98,8 @@ export type RegularRoomResponseFragment = { __typename?: 'RoomResponse', respons
 
 export type RegularFieldResponseFragment = { __typename?: 'FieldResponse', values: boolean, code?: string | null | undefined };
 
+export type RegularRoomFragment = { __typename?: 'Room', id: string, users: number, inGame: boolean, adminSocketId: string };
+
 export type RegularUserResponseFragment = { __typename?: 'UserResponse', values: boolean, error?: string | null | undefined };
 
 export type RegularUserRoomResponseFragment = { __typename?: 'RoomUserResponse', response?: { __typename?: 'UserResponse', values: boolean, error?: string | null | undefined } | null | undefined };
@@ -105,6 +121,13 @@ export type JoinRoomMutationVariables = Exact<{
 
 export type JoinRoomMutation = { __typename?: 'Mutation', joinRoom: { __typename?: 'RoomUserResponse', response?: { __typename?: 'UserResponse', values: boolean, error?: string | null | undefined } | null | undefined } };
 
+export type RoomDetailsQueryVariables = Exact<{
+  roomCode: Scalars['String'];
+}>;
+
+
+export type RoomDetailsQuery = { __typename?: 'Query', getRoomDetails?: { __typename?: 'Room', id: string, users: number, inGame: boolean, adminSocketId: string } | null | undefined };
+
 export const RegularFieldResponseFragmentDoc = gql`
     fragment RegularFieldResponse on FieldResponse {
   values
@@ -118,6 +141,14 @@ export const RegularRoomResponseFragmentDoc = gql`
   }
 }
     ${RegularFieldResponseFragmentDoc}`;
+export const RegularRoomFragmentDoc = gql`
+    fragment RegularRoom on Room {
+  id
+  users
+  inGame
+  adminSocketId
+}
+    `;
 export const RegularUserResponseFragmentDoc = gql`
     fragment RegularUserResponse on UserResponse {
   values
@@ -200,6 +231,41 @@ export function useJoinRoomMutation(baseOptions?: Apollo.MutationHookOptions<Joi
 export type JoinRoomMutationHookResult = ReturnType<typeof useJoinRoomMutation>;
 export type JoinRoomMutationResult = Apollo.MutationResult<JoinRoomMutation>;
 export type JoinRoomMutationOptions = Apollo.BaseMutationOptions<JoinRoomMutation, JoinRoomMutationVariables>;
+export const RoomDetailsDocument = gql`
+    query RoomDetails($roomCode: String!) {
+  getRoomDetails(roomCode: $roomCode) {
+    ...RegularRoom
+  }
+}
+    ${RegularRoomFragmentDoc}`;
+
+/**
+ * __useRoomDetailsQuery__
+ *
+ * To run a query within a React component, call `useRoomDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useRoomDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useRoomDetailsQuery({
+ *   variables: {
+ *      roomCode: // value for 'roomCode'
+ *   },
+ * });
+ */
+export function useRoomDetailsQuery(baseOptions: Apollo.QueryHookOptions<RoomDetailsQuery, RoomDetailsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<RoomDetailsQuery, RoomDetailsQueryVariables>(RoomDetailsDocument, options);
+      }
+export function useRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomDetailsQuery, RoomDetailsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<RoomDetailsQuery, RoomDetailsQueryVariables>(RoomDetailsDocument, options);
+        }
+export type RoomDetailsQueryHookResult = ReturnType<typeof useRoomDetailsQuery>;
+export type RoomDetailsLazyQueryHookResult = ReturnType<typeof useRoomDetailsLazyQuery>;
+export type RoomDetailsQueryResult = Apollo.QueryResult<RoomDetailsQuery, RoomDetailsQueryVariables>;
 import { IntrospectionQuery } from 'graphql';
 export default {
   "__schema": {
@@ -379,6 +445,26 @@ export default {
         "name": "Query",
         "fields": [
           {
+            "name": "getRoomDetails",
+            "type": {
+              "kind": "OBJECT",
+              "name": "Room",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "roomCode",
+                "type": {
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Any"
+                  }
+                }
+              }
+            ]
+          },
+          {
             "name": "getRoomStatus",
             "type": {
               "kind": "NON_NULL",
@@ -402,6 +488,57 @@ export default {
           },
           {
             "name": "hello",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          }
+        ],
+        "interfaces": []
+      },
+      {
+        "kind": "OBJECT",
+        "name": "Room",
+        "fields": [
+          {
+            "name": "adminSocketId",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "id",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "inGame",
+            "type": {
+              "kind": "NON_NULL",
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Any"
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "users",
             "type": {
               "kind": "NON_NULL",
               "ofType": {
