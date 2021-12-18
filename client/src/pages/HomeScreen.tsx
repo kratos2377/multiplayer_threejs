@@ -58,7 +58,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
 
     var code1 = response?.data?.createRoom?.response?.code?.toString();
 
-    history.push("/game/:" + code1);
+    history.push("/game/" + code1);
   };
 
   const joinRoom = async () => {
@@ -112,8 +112,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
 
     setError(false);
 
-    history.push("/game/:" + code);
+    history.push("/game/" + code);
   };
+
+  console.log(socket);
 
   return (
     <>

@@ -105,16 +105,18 @@ const main = async () => {
 
     socket.on("joinRoom", function (data) {
       socket.join(data.roomId);
-      socket.broadcast
-        .to(data.roomId)
-        .emit("someone-joined", { id: socket.id, username: socket.username });
+      socket.broadcast.to(data.roomId).emit("someone-joined", {
+        id: socket.id,
+        username: socket.username,
+      });
     });
 
     socket.on("leaveRoom", function (data) {
       socket.leave(data.roomId);
-      socket.broadcast
-        .to(data.roomId)
-        .emit("someone-leaved", { id: socket.id, username: socket.username });
+      socket.broadcast.to(data.roomId).emit("someone-leaved", {
+        id: socket.id,
+        username: socket.username,
+      });
 
       //Somehow we have to implement to add a resolver so that we can delete
       //the lobby and room from here and kick rest of the users out

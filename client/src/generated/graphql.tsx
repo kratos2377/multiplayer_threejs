@@ -1,11 +1,18 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
+import { IntrospectionQuery } from "graphql";
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-const defaultOptions =  {}
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
+const defaultOptions = {};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -16,160 +23,229 @@ export type Scalars = {
 };
 
 export type FieldResponse = {
-  __typename?: 'FieldResponse';
-  code?: Maybe<Scalars['String']>;
-  values: Scalars['Boolean'];
+  __typename?: "FieldResponse";
+  code?: Maybe<Scalars["String"]>;
+  values: Scalars["Boolean"];
 };
 
 export type Mutation = {
-  __typename?: 'Mutation';
+  __typename?: "Mutation";
   createRoom: RoomResponse;
-  createUser: Scalars['Boolean'];
-  destroyRoomAndLobby: Scalars['Boolean'];
+  createUser: Scalars["Boolean"];
+  destroyRoomAndLobby: Scalars["Boolean"];
   joinRoom: RoomUserResponse;
 };
 
-
 export type MutationCreateRoomArgs = {
-  adminId: Scalars['String'];
-  username: Scalars['String'];
+  adminId: Scalars["String"];
+  username: Scalars["String"];
 };
-
 
 export type MutationCreateUserArgs = {
-  id: Scalars['String'];
-  username: Scalars['String'];
+  id: Scalars["String"];
+  username: Scalars["String"];
 };
-
 
 export type MutationDestroyRoomAndLobbyArgs = {
-  roomCode: Scalars['String'];
+  roomCode: Scalars["String"];
 };
 
-
 export type MutationJoinRoomArgs = {
-  roomCode: Scalars['String'];
-  userId: Scalars['String'];
-  username: Scalars['String'];
+  roomCode: Scalars["String"];
+  userId: Scalars["String"];
+  username: Scalars["String"];
 };
 
 export type Query = {
-  __typename?: 'Query';
+  __typename?: "Query";
   getRoomDetails?: Maybe<Room>;
-  getRoomStatus: Scalars['Boolean'];
-  hello: Scalars['String'];
+  getRoomStatus: Scalars["Boolean"];
+  hello: Scalars["String"];
 };
-
 
 export type QueryGetRoomDetailsArgs = {
-  roomCode: Scalars['String'];
+  roomCode: Scalars["String"];
 };
 
-
 export type QueryGetRoomStatusArgs = {
-  roomCode: Scalars['String'];
+  roomCode: Scalars["String"];
 };
 
 export type Room = {
-  __typename?: 'Room';
-  adminSocketId: Scalars['String'];
-  id: Scalars['String'];
-  inGame: Scalars['Boolean'];
-  users: Scalars['Float'];
+  __typename?: "Room";
+  adminSocketId: Scalars["String"];
+  id: Scalars["String"];
+  inGame: Scalars["Boolean"];
+  users: Scalars["Float"];
 };
 
 export type RoomResponse = {
-  __typename?: 'RoomResponse';
+  __typename?: "RoomResponse";
   response?: Maybe<FieldResponse>;
 };
 
 export type RoomUserResponse = {
-  __typename?: 'RoomUserResponse';
+  __typename?: "RoomUserResponse";
   response?: Maybe<UserResponse>;
 };
 
 export type UserResponse = {
-  __typename?: 'UserResponse';
-  error?: Maybe<Scalars['String']>;
-  values: Scalars['Boolean'];
+  __typename?: "UserResponse";
+  error?: Maybe<Scalars["String"]>;
+  values: Scalars["Boolean"];
 };
 
-export type RegularRoomResponseFragment = { __typename?: 'RoomResponse', response?: { __typename?: 'FieldResponse', values: boolean, code?: string | null | undefined } | null | undefined };
+export type RegularRoomResponseFragment = {
+  __typename?: "RoomResponse";
+  response?:
+    | {
+        __typename?: "FieldResponse";
+        values: boolean;
+        code?: string | null | undefined;
+      }
+    | null
+    | undefined;
+};
 
-export type RegularFieldResponseFragment = { __typename?: 'FieldResponse', values: boolean, code?: string | null | undefined };
+export type RegularFieldResponseFragment = {
+  __typename?: "FieldResponse";
+  values: boolean;
+  code?: string | null | undefined;
+};
 
-export type RegularRoomFragment = { __typename?: 'Room', id: string, users: number, inGame: boolean, adminSocketId: string };
+export type RegularRoomFragment = {
+  __typename?: "Room";
+  id: string;
+  users: number;
+  inGame: boolean;
+  adminSocketId: string;
+};
 
-export type RegularUserResponseFragment = { __typename?: 'UserResponse', values: boolean, error?: string | null | undefined };
+export type RegularUserResponseFragment = {
+  __typename?: "UserResponse";
+  values: boolean;
+  error?: string | null | undefined;
+};
 
-export type RegularUserRoomResponseFragment = { __typename?: 'RoomUserResponse', response?: { __typename?: 'UserResponse', values: boolean, error?: string | null | undefined } | null | undefined };
+export type RegularUserRoomResponseFragment = {
+  __typename?: "RoomUserResponse";
+  response?:
+    | {
+        __typename?: "UserResponse";
+        values: boolean;
+        error?: string | null | undefined;
+      }
+    | null
+    | undefined;
+};
 
 export type CreateRoomMutationVariables = Exact<{
-  adminId: Scalars['String'];
-  username: Scalars['String'];
+  adminId: Scalars["String"];
+  username: Scalars["String"];
 }>;
 
-
-export type CreateRoomMutation = { __typename?: 'Mutation', createRoom: { __typename?: 'RoomResponse', response?: { __typename?: 'FieldResponse', values: boolean, code?: string | null | undefined } | null | undefined } };
+export type CreateRoomMutation = {
+  __typename?: "Mutation";
+  createRoom: {
+    __typename?: "RoomResponse";
+    response?:
+      | {
+          __typename?: "FieldResponse";
+          values: boolean;
+          code?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  };
+};
 
 export type JoinRoomMutationVariables = Exact<{
-  userId: Scalars['String'];
-  username: Scalars['String'];
-  roomCode: Scalars['String'];
+  userId: Scalars["String"];
+  username: Scalars["String"];
+  roomCode: Scalars["String"];
 }>;
 
-
-export type JoinRoomMutation = { __typename?: 'Mutation', joinRoom: { __typename?: 'RoomUserResponse', response?: { __typename?: 'UserResponse', values: boolean, error?: string | null | undefined } | null | undefined } };
+export type JoinRoomMutation = {
+  __typename?: "Mutation";
+  joinRoom: {
+    __typename?: "RoomUserResponse";
+    response?:
+      | {
+          __typename?: "UserResponse";
+          values: boolean;
+          error?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  };
+};
 
 export type RoomDetailsQueryVariables = Exact<{
-  roomCode: Scalars['String'];
+  roomCode: Scalars["String"];
 }>;
 
-
-export type RoomDetailsQuery = { __typename?: 'Query', getRoomDetails?: { __typename?: 'Room', id: string, users: number, inGame: boolean, adminSocketId: string } | null | undefined };
+export type RoomDetailsQuery = {
+  __typename?: "Query";
+  getRoomDetails?:
+    | {
+        __typename?: "Room";
+        id: string;
+        users: number;
+        inGame: boolean;
+        adminSocketId: string;
+      }
+    | null
+    | undefined;
+};
 
 export const RegularFieldResponseFragmentDoc = gql`
-    fragment RegularFieldResponse on FieldResponse {
-  values
-  code
-}
-    `;
+  fragment RegularFieldResponse on FieldResponse {
+    values
+    code
+  }
+`;
 export const RegularRoomResponseFragmentDoc = gql`
-    fragment RegularRoomResponse on RoomResponse {
-  response {
-    ...RegularFieldResponse
+  fragment RegularRoomResponse on RoomResponse {
+    response {
+      ...RegularFieldResponse
+    }
   }
-}
-    ${RegularFieldResponseFragmentDoc}`;
+  ${RegularFieldResponseFragmentDoc}
+`;
 export const RegularRoomFragmentDoc = gql`
-    fragment RegularRoom on Room {
-  id
-  users
-  inGame
-  adminSocketId
-}
-    `;
+  fragment RegularRoom on Room {
+    id
+    users
+    inGame
+    adminSocketId
+  }
+`;
 export const RegularUserResponseFragmentDoc = gql`
-    fragment RegularUserResponse on UserResponse {
-  values
-  error
-}
-    `;
+  fragment RegularUserResponse on UserResponse {
+    values
+    error
+  }
+`;
 export const RegularUserRoomResponseFragmentDoc = gql`
-    fragment RegularUserRoomResponse on RoomUserResponse {
-  response {
-    ...RegularUserResponse
+  fragment RegularUserRoomResponse on RoomUserResponse {
+    response {
+      ...RegularUserResponse
+    }
   }
-}
-    ${RegularUserResponseFragmentDoc}`;
+  ${RegularUserResponseFragmentDoc}
+`;
 export const CreateRoomDocument = gql`
-    mutation CreateRoom($adminId: String!, $username: String!) {
-  createRoom(adminId: $adminId, username: $username) {
-    ...RegularRoomResponse
+  mutation CreateRoom($adminId: String!, $username: String!) {
+    createRoom(adminId: $adminId, username: $username) {
+      ...RegularRoomResponse
+    }
   }
-}
-    ${RegularRoomResponseFragmentDoc}`;
-export type CreateRoomMutationFn = Apollo.MutationFunction<CreateRoomMutation, CreateRoomMutationVariables>;
+  ${RegularRoomResponseFragmentDoc}
+`;
+export type CreateRoomMutationFn = Apollo.MutationFunction<
+  CreateRoomMutation,
+  CreateRoomMutationVariables
+>;
 
 /**
  * __useCreateRoomMutation__
@@ -189,21 +265,39 @@ export type CreateRoomMutationFn = Apollo.MutationFunction<CreateRoomMutation, C
  *   },
  * });
  */
-export function useCreateRoomMutation(baseOptions?: Apollo.MutationHookOptions<CreateRoomMutation, CreateRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateRoomMutation, CreateRoomMutationVariables>(CreateRoomDocument, options);
-      }
-export type CreateRoomMutationHookResult = ReturnType<typeof useCreateRoomMutation>;
-export type CreateRoomMutationResult = Apollo.MutationResult<CreateRoomMutation>;
-export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<CreateRoomMutation, CreateRoomMutationVariables>;
-export const JoinRoomDocument = gql`
-    mutation JoinRoom($userId: String!, $username: String!, $roomCode: String!) {
-  joinRoom(userId: $userId, username: $username, roomCode: $roomCode) {
-    ...RegularUserRoomResponse
-  }
+export function useCreateRoomMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateRoomMutation,
+    CreateRoomMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateRoomMutation, CreateRoomMutationVariables>(
+    CreateRoomDocument,
+    options
+  );
 }
-    ${RegularUserRoomResponseFragmentDoc}`;
-export type JoinRoomMutationFn = Apollo.MutationFunction<JoinRoomMutation, JoinRoomMutationVariables>;
+export type CreateRoomMutationHookResult = ReturnType<
+  typeof useCreateRoomMutation
+>;
+export type CreateRoomMutationResult =
+  Apollo.MutationResult<CreateRoomMutation>;
+export type CreateRoomMutationOptions = Apollo.BaseMutationOptions<
+  CreateRoomMutation,
+  CreateRoomMutationVariables
+>;
+export const JoinRoomDocument = gql`
+  mutation JoinRoom($userId: String!, $username: String!, $roomCode: String!) {
+    joinRoom(userId: $userId, username: $username, roomCode: $roomCode) {
+      ...RegularUserRoomResponse
+    }
+  }
+  ${RegularUserRoomResponseFragmentDoc}
+`;
+export type JoinRoomMutationFn = Apollo.MutationFunction<
+  JoinRoomMutation,
+  JoinRoomMutationVariables
+>;
 
 /**
  * __useJoinRoomMutation__
@@ -224,20 +318,32 @@ export type JoinRoomMutationFn = Apollo.MutationFunction<JoinRoomMutation, JoinR
  *   },
  * });
  */
-export function useJoinRoomMutation(baseOptions?: Apollo.MutationHookOptions<JoinRoomMutation, JoinRoomMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<JoinRoomMutation, JoinRoomMutationVariables>(JoinRoomDocument, options);
-      }
+export function useJoinRoomMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    JoinRoomMutation,
+    JoinRoomMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<JoinRoomMutation, JoinRoomMutationVariables>(
+    JoinRoomDocument,
+    options
+  );
+}
 export type JoinRoomMutationHookResult = ReturnType<typeof useJoinRoomMutation>;
 export type JoinRoomMutationResult = Apollo.MutationResult<JoinRoomMutation>;
-export type JoinRoomMutationOptions = Apollo.BaseMutationOptions<JoinRoomMutation, JoinRoomMutationVariables>;
+export type JoinRoomMutationOptions = Apollo.BaseMutationOptions<
+  JoinRoomMutation,
+  JoinRoomMutationVariables
+>;
 export const RoomDetailsDocument = gql`
-    query RoomDetails($roomCode: String!) {
-  getRoomDetails(roomCode: $roomCode) {
-    ...RegularRoom
+  query RoomDetails($roomCode: String!) {
+    getRoomDetails(roomCode: $roomCode) {
+      ...RegularRoom
+    }
   }
-}
-    ${RegularRoomFragmentDoc}`;
+  ${RegularRoomFragmentDoc}
+`;
 
 /**
  * __useRoomDetailsQuery__
@@ -255,365 +361,386 @@ export const RoomDetailsDocument = gql`
  *   },
  * });
  */
-export function useRoomDetailsQuery(baseOptions: Apollo.QueryHookOptions<RoomDetailsQuery, RoomDetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RoomDetailsQuery, RoomDetailsQueryVariables>(RoomDetailsDocument, options);
-      }
-export function useRoomDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RoomDetailsQuery, RoomDetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RoomDetailsQuery, RoomDetailsQueryVariables>(RoomDetailsDocument, options);
-        }
+export function useRoomDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    RoomDetailsQuery,
+    RoomDetailsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<RoomDetailsQuery, RoomDetailsQueryVariables>(
+    RoomDetailsDocument,
+    options
+  );
+}
+export function useRoomDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    RoomDetailsQuery,
+    RoomDetailsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<RoomDetailsQuery, RoomDetailsQueryVariables>(
+    RoomDetailsDocument,
+    options
+  );
+}
 export type RoomDetailsQueryHookResult = ReturnType<typeof useRoomDetailsQuery>;
-export type RoomDetailsLazyQueryHookResult = ReturnType<typeof useRoomDetailsLazyQuery>;
-export type RoomDetailsQueryResult = Apollo.QueryResult<RoomDetailsQuery, RoomDetailsQueryVariables>;
-import { IntrospectionQuery } from 'graphql';
+export type RoomDetailsLazyQueryHookResult = ReturnType<
+  typeof useRoomDetailsLazyQuery
+>;
+export type RoomDetailsQueryResult = Apollo.QueryResult<
+  RoomDetailsQuery,
+  RoomDetailsQueryVariables
+>;
+
 export default {
-  "__schema": {
-    "queryType": {
-      "name": "Query"
+  __schema: {
+    queryType: {
+      name: "Query",
     },
-    "mutationType": {
-      "name": "Mutation"
+    mutationType: {
+      name: "Mutation",
     },
-    "subscriptionType": null,
-    "types": [
+    subscriptionType: null,
+    types: [
       {
-        "kind": "OBJECT",
-        "name": "FieldResponse",
-        "fields": [
+        kind: "OBJECT",
+        name: "FieldResponse",
+        fields: [
           {
-            "name": "code",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+            name: "code",
+            type: {
+              kind: "SCALAR",
+              name: "Any",
             },
-            "args": []
+            args: [],
           },
           {
-            "name": "values",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "values",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
-          }
+            args: [],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "OBJECT",
-        "name": "Mutation",
-        "fields": [
+        kind: "OBJECT",
+        name: "Mutation",
+        fields: [
           {
-            "name": "createRoom",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "RoomResponse",
-                "ofType": null
-              }
+            name: "createRoom",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "OBJECT",
+                name: "RoomResponse",
+                ofType: null,
+              },
             },
-            "args": [
+            args: [
               {
-                "name": "adminId",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
+                name: "adminId",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
               },
               {
-                "name": "username",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
+                name: "username",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
           },
           {
-            "name": "createUser",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "createUser",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": [
+            args: [
               {
-                "name": "id",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
+                name: "id",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
               },
               {
-                "name": "username",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
+                name: "username",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
           },
           {
-            "name": "destroyRoomAndLobby",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "destroyRoomAndLobby",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": [
+            args: [
               {
-                "name": "roomCode",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
+                name: "roomCode",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
           },
           {
-            "name": "joinRoom",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "RoomUserResponse",
-                "ofType": null
-              }
+            name: "joinRoom",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "OBJECT",
+                name: "RoomUserResponse",
+                ofType: null,
+              },
             },
-            "args": [
+            args: [
               {
-                "name": "roomCode",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
+                name: "roomCode",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
               },
               {
-                "name": "userId",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
+                name: "userId",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
               },
               {
-                "name": "username",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
-          }
+                name: "username",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "OBJECT",
-        "name": "Query",
-        "fields": [
+        kind: "OBJECT",
+        name: "Query",
+        fields: [
           {
-            "name": "getRoomDetails",
-            "type": {
-              "kind": "OBJECT",
-              "name": "Room",
-              "ofType": null
+            name: "getRoomDetails",
+            type: {
+              kind: "OBJECT",
+              name: "Room",
+              ofType: null,
             },
-            "args": [
+            args: [
               {
-                "name": "roomCode",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
+                name: "roomCode",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
           },
           {
-            "name": "getRoomStatus",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "getRoomStatus",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": [
+            args: [
               {
-                "name": "roomCode",
-                "type": {
-                  "kind": "NON_NULL",
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "Any"
-                  }
-                }
-              }
-            ]
+                name: "roomCode",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
           },
           {
-            "name": "hello",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "hello",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
-          }
+            args: [],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "OBJECT",
-        "name": "Room",
-        "fields": [
+        kind: "OBJECT",
+        name: "Room",
+        fields: [
           {
-            "name": "adminSocketId",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "adminSocketId",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
+            args: [],
           },
           {
-            "name": "id",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "id",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
+            args: [],
           },
           {
-            "name": "inGame",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "inGame",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
+            args: [],
           },
           {
-            "name": "users",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "users",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
-          }
+            args: [],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "OBJECT",
-        "name": "RoomResponse",
-        "fields": [
+        kind: "OBJECT",
+        name: "RoomResponse",
+        fields: [
           {
-            "name": "response",
-            "type": {
-              "kind": "OBJECT",
-              "name": "FieldResponse",
-              "ofType": null
+            name: "response",
+            type: {
+              kind: "OBJECT",
+              name: "FieldResponse",
+              ofType: null,
             },
-            "args": []
-          }
+            args: [],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "OBJECT",
-        "name": "RoomUserResponse",
-        "fields": [
+        kind: "OBJECT",
+        name: "RoomUserResponse",
+        fields: [
           {
-            "name": "response",
-            "type": {
-              "kind": "OBJECT",
-              "name": "UserResponse",
-              "ofType": null
+            name: "response",
+            type: {
+              kind: "OBJECT",
+              name: "UserResponse",
+              ofType: null,
             },
-            "args": []
-          }
+            args: [],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "OBJECT",
-        "name": "UserResponse",
-        "fields": [
+        kind: "OBJECT",
+        name: "UserResponse",
+        fields: [
           {
-            "name": "error",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Any"
+            name: "error",
+            type: {
+              kind: "SCALAR",
+              name: "Any",
             },
-            "args": []
+            args: [],
           },
           {
-            "name": "values",
-            "type": {
-              "kind": "NON_NULL",
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Any"
-              }
+            name: "values",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
             },
-            "args": []
-          }
+            args: [],
+          },
         ],
-        "interfaces": []
+        interfaces: [],
       },
       {
-        "kind": "SCALAR",
-        "name": "Any"
-      }
+        kind: "SCALAR",
+        name: "Any",
+      },
     ],
-    "directives": []
-  }
+    directives: [],
+  },
 } as unknown as IntrospectionQuery;
