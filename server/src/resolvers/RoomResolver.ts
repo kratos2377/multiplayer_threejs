@@ -10,6 +10,7 @@ import { Room } from "../entity/Room";
 import {
   Arg,
   Field,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -186,5 +187,16 @@ export class RoomResolver {
     }
 
     return room;
+  }
+
+  @Query(() => Int)
+  async getNumberofUsersInRoom(
+    @Arg("roomCode") roomCode: string
+  ): Promise<number> {
+    console.log("Room Code for query");
+    console.log(roomCode);
+    const room = (await Room.findOne({ where: { id: roomCode } })) as Room;
+
+    return 5 - room.users;
   }
 }

@@ -93,7 +93,7 @@ const main = async () => {
   // console.log("THIS IS IO");
   // console.log(io);
   io.on("connection", function (socket: ExtSocket) {
-    console.log(socket);
+    // console.log(socket);
     socket.emit("setId", { id: socket.id });
     socket.on("init", function (data) {
       socket.x = 0;
@@ -108,6 +108,7 @@ const main = async () => {
       socket.broadcast.to(data.roomId).emit("someone-joined", {
         id: socket.id,
         username: socket.username,
+        users: data.users,
       });
     });
 
@@ -116,6 +117,7 @@ const main = async () => {
       socket.broadcast.to(data.roomId).emit("someone-leaved", {
         id: socket.id,
         username: socket.username,
+        users: data.users,
       });
 
       //Somehow we have to implement to add a resolver so that we can delete

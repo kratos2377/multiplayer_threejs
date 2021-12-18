@@ -29,6 +29,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
   const [joinRoomMutation] = useJoinRoomMutation();
   socket.on("setId", function (data) {
     setSocketId(data.id);
+    console.log(socket);
   });
 
   const changeCreateRoomStatus = () => setOpenCreateRoom(true);
@@ -114,8 +115,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
 
     history.push("/game/" + code);
   };
-
-  console.log(socket);
 
   return (
     <>

@@ -58,9 +58,14 @@ export type MutationJoinRoomArgs = {
 
 export type Query = {
   __typename?: "Query";
+  getNumberofUsersInRoom: Scalars["Int"];
   getRoomDetails?: Maybe<Room>;
   getRoomStatus: Scalars["Boolean"];
   hello: Scalars["String"];
+};
+
+export type QueryGetNumberofUsersInRoomArgs = {
+  roomCode: Scalars["String"];
 };
 
 export type QueryGetRoomDetailsArgs = {
@@ -178,6 +183,15 @@ export type JoinRoomMutation = {
       | null
       | undefined;
   };
+};
+
+export type NumberOfUsersInRoomQueryVariables = Exact<{
+  roomCode: Scalars["String"];
+}>;
+
+export type NumberOfUsersInRoomQuery = {
+  __typename?: "Query";
+  getNumberofUsersInRoom: number;
 };
 
 export type RoomDetailsQueryVariables = Exact<{
@@ -335,6 +349,62 @@ export type JoinRoomMutationResult = Apollo.MutationResult<JoinRoomMutation>;
 export type JoinRoomMutationOptions = Apollo.BaseMutationOptions<
   JoinRoomMutation,
   JoinRoomMutationVariables
+>;
+export const NumberOfUsersInRoomDocument = gql`
+  query NumberOfUsersInRoom($roomCode: String!) {
+    getNumberofUsersInRoom(roomCode: $roomCode)
+  }
+`;
+
+/**
+ * __useNumberOfUsersInRoomQuery__
+ *
+ * To run a query within a React component, call `useNumberOfUsersInRoomQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNumberOfUsersInRoomQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNumberOfUsersInRoomQuery({
+ *   variables: {
+ *      roomCode: // value for 'roomCode'
+ *   },
+ * });
+ */
+export function useNumberOfUsersInRoomQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    NumberOfUsersInRoomQuery,
+    NumberOfUsersInRoomQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    NumberOfUsersInRoomQuery,
+    NumberOfUsersInRoomQueryVariables
+  >(NumberOfUsersInRoomDocument, options);
+}
+export function useNumberOfUsersInRoomLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    NumberOfUsersInRoomQuery,
+    NumberOfUsersInRoomQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    NumberOfUsersInRoomQuery,
+    NumberOfUsersInRoomQueryVariables
+  >(NumberOfUsersInRoomDocument, options);
+}
+export type NumberOfUsersInRoomQueryHookResult = ReturnType<
+  typeof useNumberOfUsersInRoomQuery
+>;
+export type NumberOfUsersInRoomLazyQueryHookResult = ReturnType<
+  typeof useNumberOfUsersInRoomLazyQuery
+>;
+export type NumberOfUsersInRoomQueryResult = Apollo.QueryResult<
+  NumberOfUsersInRoomQuery,
+  NumberOfUsersInRoomQueryVariables
 >;
 export const RoomDetailsDocument = gql`
   query RoomDetails($roomCode: String!) {
@@ -571,6 +641,28 @@ export default {
         kind: "OBJECT",
         name: "Query",
         fields: [
+          {
+            name: "getNumberofUsersInRoom",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [
+              {
+                name: "roomCode",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
           {
             name: "getRoomDetails",
             type: {
