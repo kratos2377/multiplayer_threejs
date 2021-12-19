@@ -47,6 +47,10 @@ class RoomResponse {
   response?: FieldResponse;
 }
 
+// @ObjectType()
+// class LobbyResponse {
+//   @Field(() =>)
+// }
 @Resolver(Room)
 export class RoomResolver {
   @Mutation(() => RoomResponse)
@@ -198,5 +202,13 @@ export class RoomResolver {
     const room = (await Room.findOne({ where: { id: roomCode } })) as Room;
 
     return 5 - room.users;
+  }
+
+  @Query(() => [Lobby])
+  async getLobbyDetails(@Arg("roomCode") roomCode: string): Promise<Lobby[]> {
+    const lobby = (await Lobby.find({
+      where: { roomId: roomCode },
+    })) as Lobby[];
+    return lobby;
   }
 }

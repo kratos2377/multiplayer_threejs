@@ -28,6 +28,14 @@ export type FieldResponse = {
   values: Scalars["Boolean"];
 };
 
+export type Lobby = {
+  __typename?: "Lobby";
+  id: Scalars["ID"];
+  roomId: Scalars["String"];
+  userId: Scalars["String"];
+  username: Scalars["String"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   createRoom: RoomResponse;
@@ -58,10 +66,15 @@ export type MutationJoinRoomArgs = {
 
 export type Query = {
   __typename?: "Query";
+  getLobbyDetails: Array<Lobby>;
   getNumberofUsersInRoom: Scalars["Int"];
   getRoomDetails?: Maybe<Room>;
   getRoomStatus: Scalars["Boolean"];
   hello: Scalars["String"];
+};
+
+export type QueryGetLobbyDetailsArgs = {
+  roomCode: Scalars["String"];
 };
 
 export type QueryGetNumberofUsersInRoomArgs = {
@@ -116,6 +129,14 @@ export type RegularFieldResponseFragment = {
   __typename?: "FieldResponse";
   values: boolean;
   code?: string | null | undefined;
+};
+
+export type RegularLobbyFragment = {
+  __typename?: "Lobby";
+  id: string;
+  roomId: string;
+  userId: string;
+  username: string;
 };
 
 export type RegularRoomFragment = {
@@ -194,6 +215,21 @@ export type NumberOfUsersInRoomQuery = {
   getNumberofUsersInRoom: number;
 };
 
+export type GetLobbyDetailsQueryVariables = Exact<{
+  roomCode: Scalars["String"];
+}>;
+
+export type GetLobbyDetailsQuery = {
+  __typename?: "Query";
+  getLobbyDetails: Array<{
+    __typename?: "Lobby";
+    id: string;
+    roomId: string;
+    userId: string;
+    username: string;
+  }>;
+};
+
 export type RoomDetailsQueryVariables = Exact<{
   roomCode: Scalars["String"];
 }>;
@@ -225,6 +261,14 @@ export const RegularRoomResponseFragmentDoc = gql`
     }
   }
   ${RegularFieldResponseFragmentDoc}
+`;
+export const RegularLobbyFragmentDoc = gql`
+  fragment RegularLobby on Lobby {
+    id
+    roomId
+    userId
+    username
+  }
 `;
 export const RegularRoomFragmentDoc = gql`
   fragment RegularRoom on Room {
@@ -406,6 +450,65 @@ export type NumberOfUsersInRoomQueryResult = Apollo.QueryResult<
   NumberOfUsersInRoomQuery,
   NumberOfUsersInRoomQueryVariables
 >;
+export const GetLobbyDetailsDocument = gql`
+  query GetLobbyDetails($roomCode: String!) {
+    getLobbyDetails(roomCode: $roomCode) {
+      ...RegularLobby
+    }
+  }
+  ${RegularLobbyFragmentDoc}
+`;
+
+/**
+ * __useGetLobbyDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetLobbyDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLobbyDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLobbyDetailsQuery({
+ *   variables: {
+ *      roomCode: // value for 'roomCode'
+ *   },
+ * });
+ */
+export function useGetLobbyDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetLobbyDetailsQuery,
+    GetLobbyDetailsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetLobbyDetailsQuery, GetLobbyDetailsQueryVariables>(
+    GetLobbyDetailsDocument,
+    options
+  );
+}
+export function useGetLobbyDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetLobbyDetailsQuery,
+    GetLobbyDetailsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetLobbyDetailsQuery,
+    GetLobbyDetailsQueryVariables
+  >(GetLobbyDetailsDocument, options);
+}
+export type GetLobbyDetailsQueryHookResult = ReturnType<
+  typeof useGetLobbyDetailsQuery
+>;
+export type GetLobbyDetailsLazyQueryHookResult = ReturnType<
+  typeof useGetLobbyDetailsLazyQuery
+>;
+export type GetLobbyDetailsQueryResult = Apollo.QueryResult<
+  GetLobbyDetailsQuery,
+  GetLobbyDetailsQueryVariables
+>;
 export const RoomDetailsDocument = gql`
   query RoomDetails($roomCode: String!) {
     getRoomDetails(roomCode: $roomCode) {
@@ -488,6 +591,57 @@ export default {
           },
           {
             name: "values",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+        ],
+        interfaces: [],
+      },
+      {
+        kind: "OBJECT",
+        name: "Lobby",
+        fields: [
+          {
+            name: "id",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "roomId",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "userId",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [],
+          },
+          {
+            name: "username",
             type: {
               kind: "NON_NULL",
               ofType: {
@@ -641,6 +795,35 @@ export default {
         kind: "OBJECT",
         name: "Query",
         fields: [
+          {
+            name: "getLobbyDetails",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "LIST",
+                ofType: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "OBJECT",
+                    name: "Lobby",
+                    ofType: null,
+                  },
+                },
+              },
+            },
+            args: [
+              {
+                name: "roomCode",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
           {
             name: "getNumberofUsersInRoom",
             type: {
