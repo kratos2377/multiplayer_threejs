@@ -65,6 +65,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
   const joinRoom = async () => {
     setOpenCreateRoom(false);
     setOpenJoinRoom(false);
+    setError(false);
 
     if (username.trim() === "" || username.length <= 4) {
       setErrorMessage("Username Length must be greater than 4");

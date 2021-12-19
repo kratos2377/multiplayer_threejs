@@ -19,6 +19,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   username,
 }) => {
   const { roomId } = useParams<GameInfoScreenRoomIdProps>();
+  console.log(roomId);
   const [totalUsers, setTotalUsers] = useState(0);
   const [newDisabled, setNewDisabled] = useState(true);
   const [dom_content, setDomContent] = useState<Array<JSX.Element>>([]);
@@ -56,6 +57,30 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
   console.log("TIMES");
 
+  const renderTable = () => {
+    let dom_content_copy: JSX.Element[] = [];
+    for (var i = 0; i < allUsers.length; i += 2) {
+      dom_content_copy.push(
+        <tr>
+          <td>
+            {i + 1} {` ${allUsers[i].username}`}{" "}
+          </td>
+          {i + 1 < allUsers.length ? (
+            <td>
+              {i + 2} {` ${allUsers[i + 1].username}`}
+            </td>
+          ) : (
+            <td></td>
+          )}
+        </tr>
+      );
+    }
+    // console.log("DOM CONTENT");
+    // console.log(dom_content_copy);
+
+    setDomContent(dom_content_copy);
+  };
+
   socket.emit("init", {
     x: 0,
     y: 0,
@@ -64,11 +89,30 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     roomCode: roomId,
   });
 
-  // socket.emit("joinRoom", {
-  //   roomId: roomId,
-  //   users: 2,
-  // });
-  // setTotalUsers(roomData?.getNumberofUsersInRoom!);
+  useEffect(() => {
+    if (!lobbyLoading && lobbyData) {
+      console.log(lobbyData);
+
+      socket.emit("joinRoom", {
+        roomId: roomId,
+        users: lobbyData?.getLobbyDetails?.length,
+      });
+
+      setTotalUsers(lobbyData?.getLobbyDetails?.length);
+      let newAllusers: Array<{
+        id: string;
+        username: string;
+      }> = [];
+      for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
+        newAllusers.push({
+          id: lobbyData?.getLobbyDetails[i]?.userId,
+          username: lobbyData?.getLobbyDetails[i]?.username,
+        });
+      }
+      setAllUsers(newAllusers);
+      renderTable();
+    }
+  }, [lobbyLoading, lobbyData]);
 
   socket.on("joined-room", function (data) {
     console.log("Total users");
@@ -90,37 +134,27 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   });
 
   const handleLeavingRoom = () => {};
+  const startTheGame = () => {};
 
-  const renderTable = () => {
-    let dom_content_copy: JSX.Element[] = [];
-    for (var i = 1; i <= 16; i += 2) {
-      dom_content_copy.push(
-        <tr>
-          <td>{i} </td>
-          <td>
-            {i + 1} {"   somename1"}
-          </td>
-        </tr>
-      );
-    }
-    console.log("DOM CONTENT");
-    console.log(dom_content_copy);
-
-    setDomContent(dom_content_copy);
-  };
-
-  useEffect(() => {
-    renderTable();
-  }, []);
+  // useEffect(() => {
+  //   renderTable();
+  // }, []);
 
   //renderTable();
-
+  console.log(lobbyData);
+  // console.log(dom_content);
   return (
     <>
-      {!loading && !roomLoading && !roomLoading ? (
+      {!loading && !lobbyLoading ? (
         <div>
           <h3>Game Lobby Users</h3>
-          <h3>The Room Code is- {roomId}</h3>
+          <div className="display: inline">
+            <span className="float: right">
+              <h3>The Room Code is- </h3>
+              {roomId}
+            </span>
+            <p></p>
+          </div>
           <h3>Players in Lobby: {totalUsers}/16</h3>
           <div className="col-xs-6">
             <Row className="flex" sm={3} md={2} lg={2}>
@@ -133,7 +167,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
               <Row>
                 {data?.getRoomDetails?.adminSocketId?.toString() ===
                 socket.id.toString() ? (
-                  <Button>Start Game</Button>
+                  <Button onClick={startTheGame}>Start Game</Button>
                 ) : (
                   <div></div>
                 )}

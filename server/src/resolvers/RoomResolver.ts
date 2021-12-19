@@ -106,9 +106,12 @@ export class RoomResolver {
     @Arg("username") username: string,
     @Arg("roomCode") roomCode: string
   ): Promise<RoomUserResponse> {
+    console.log("Room Code Recieved");
+    console.log(roomCode);
     let room = (await Room.findOne({ where: { id: roomCode } })) as Room;
 
     if (!room) {
+      console.log("1 Room Does not exist");
       return {
         response: {
           values: false,
@@ -138,7 +141,7 @@ export class RoomResolver {
     let lobby = (await Lobby.find({ where: { roomId: roomCode } })) as Lobby[];
 
     for (var i = 0; i < lobby.length; i++) {
-      if (lobby[i].username.toString === username.toString) {
+      if (lobby[i].username === username) {
         return {
           response: {
             values: false,
