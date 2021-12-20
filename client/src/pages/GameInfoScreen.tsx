@@ -112,13 +112,14 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       setAllUsers(newAllusers);
       renderTable();
     }
-  }, [lobbyLoading, lobbyData]);
+  }, [lobbyLoading]);
 
-  socket.on("joined-room", function (data) {
-    console.log("Total users");
-    console.log(socket);
-  });
+  // socket.on("joined-room", function (data) {
+  //   console.log("Total users");
+  //   console.log(socket);
+  // });
 
+  //MOst Probably problem is here
   socket.on("someone-joined", function (data) {
     setTotalUsers(data.users);
 
@@ -129,6 +130,8 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       id: string;
       username: string;
     }> = [...allUsers, { id: data.id, username: data.username }];
+    console.log("New Users");
+    console.log(newAllusers);
     setAllUsers(newAllusers);
     renderTable();
   });

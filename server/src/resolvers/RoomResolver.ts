@@ -106,12 +106,11 @@ export class RoomResolver {
     @Arg("username") username: string,
     @Arg("roomCode") roomCode: string
   ): Promise<RoomUserResponse> {
-    console.log("Room Code Recieved");
-    console.log(roomCode);
+    // console.log("Room Code Recieved");
+    // console.log(roomCode);
     let room = (await Room.findOne({ where: { id: roomCode } })) as Room;
 
     if (!room) {
-      console.log("1 Room Does not exist");
       return {
         response: {
           values: false,
@@ -163,6 +162,27 @@ export class RoomResolver {
         error: NONE,
       },
     };
+  }
+
+  @Mutation(() => Boolean)
+  async leaveRoom(
+    @Arg("id") id: string,
+    @Arg("roomCode") roomCode: string
+  ): Promise<Boolean> {
+    let room = (await Room.findOne({ where: { id: roomCode } })) as Room;
+
+    if (!room) return false;
+
+    if (room.adminSocketId === id) {
+      await Room.delete({ id: roomCode });
+      await Lobby.delete({ roomId: roomCode });
+
+      return true;
+    }
+
+    await Lobby.delete({ userId: id });
+
+    return true;
   }
 
   @Query(() => Boolean)
