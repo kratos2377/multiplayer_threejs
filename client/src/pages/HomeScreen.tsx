@@ -59,7 +59,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
 
     var code1 = response?.data?.createRoom?.response?.code?.toString();
 
-    history.push("/game/" + code1, { username });
+    history.push({
+      pathname: "/game/" + code1,
+      state: { username: username, socketId: socketId },
+    });
   };
 
   const joinRoom = async () => {
@@ -114,7 +117,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
 
     setError(false);
 
-    history.push("/game/" + code, { username });
+    history.push({
+      pathname: "/game/" + code,
+      state: { username: username, socketId: socketId },
+    });
   };
 
   return (

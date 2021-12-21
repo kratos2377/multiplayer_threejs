@@ -105,6 +105,10 @@ const main = async () => {
 
     socket.on("joinRoom", function (data) {
       socket.join(data.roomId);
+      console.log("Room Id to be joined");
+      console.log(data.roomId);
+      console.log(socket.id);
+      console.log(socket.username);
       socket.broadcast.to(data.roomId).emit("someone-joined", {
         id: socket.id,
         username: socket.username,
@@ -119,12 +123,12 @@ const main = async () => {
         username: socket.username,
         users: data.users,
       });
+    });
 
-      //Somehow we have to implement to add a resolver so that we can delete
-      //the lobby and room from here and kick rest of the users out
-
-      if (data.adminSocketId === socket.id) {
-      }
+    socket.on("throw-all-users-out-of-room", function (data) {
+      socket.broadcast.to(data.roomId).emit("throw-room-recieved", {
+        value: "THROW",
+      });
     });
 
     socket.on("gameStart", function (data) {

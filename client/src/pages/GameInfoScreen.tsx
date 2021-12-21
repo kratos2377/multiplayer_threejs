@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Button, Container, Row, Spinner, Table } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import {
+  Button,
+  Container,
+  Form,
+  Modal,
+  Row,
+  Spinner,
+  Table,
+} from "react-bootstrap";
+import { RouteComponentProps, useLocation, useParams } from "react-router-dom";
 import {
   useGetLobbyDetailsQuery,
+  useLeaveRoomMutation,
   useNumberOfUsersInRoomQuery,
   useRoomDetailsQuery,
 } from "../generated/graphql";
@@ -11,17 +20,23 @@ interface GameInfoScreenRoomIdProps {
   roomId: string;
 }
 
-interface GameInfoScreenRoomProps {
-  username: string;
-}
+interface GameInfoScreenRoomProps extends RouteComponentProps {}
+
+// interface LocationState extends RouteComponentProps <{location: {state: {username: 'value'}}}> {
+
+// }
 
 export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
-  username,
+  history,
 }) => {
   const { roomId } = useParams<GameInfoScreenRoomIdProps>();
-  console.log(roomId);
+  const location = useLocation<{ username: "value"; socketId: "value" }>();
+
   const [totalUsers, setTotalUsers] = useState(0);
   const [newDisabled, setNewDisabled] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [leaveRoom] = useLeaveRoomMutation();
   const [dom_content, setDomContent] = useState<Array<JSX.Element>>([]);
   const [allUsers, setAllUsers] = useState<
     Array<{
@@ -35,15 +50,15 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     },
   });
 
-  const {
-    data: roomData,
-    error: roomError,
-    loading: roomLoading,
-  } = useNumberOfUsersInRoomQuery({
-    variables: {
-      roomCode: roomId,
-    },
-  });
+  // const {
+  //   data: roomData,
+  //   error: roomError,
+  //   loading: roomLoading,
+  // } = useNumberOfUsersInRoomQuery({
+  //   variables: {
+  //     roomCode: roomId,
+  //   },
+  // });
 
   const {
     data: lobbyData,
@@ -56,6 +71,15 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   });
 
   console.log("TIMES");
+
+  const changeArray = async (
+    newAllusers: Array<{
+      id: string;
+      username: string;
+    }>
+  ) => {
+    setAllUsers(newAllusers);
+  };
 
   const renderTable = () => {
     let dom_content_copy: JSX.Element[] = [];
@@ -85,34 +109,48 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     x: 0,
     y: 0,
     z: 0,
-    username: username,
+    username: location.state.username,
     roomCode: roomId,
   });
 
   useEffect(() => {
-    if (!lobbyLoading && lobbyData) {
-      console.log(lobbyData);
-
-      socket.emit("joinRoom", {
-        roomId: roomId,
-        users: lobbyData?.getLobbyDetails?.length,
-      });
-
-      setTotalUsers(lobbyData?.getLobbyDetails?.length);
-      let newAllusers: Array<{
-        id: string;
-        username: string;
-      }> = [];
-      for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
-        newAllusers.push({
-          id: lobbyData?.getLobbyDetails[i]?.userId,
-          username: lobbyData?.getLobbyDetails[i]?.username,
+    const renderEffectFunction = async () => {
+      if (!lobbyLoading && lobbyData) {
+        console.log(lobbyData);
+        console.log(location.state.username);
+        socket.emit("joinRoom", {
+          roomId: roomId,
+          users: lobbyData?.getLobbyDetails?.length,
         });
+
+        setTotalUsers(lobbyData?.getLobbyDetails?.length);
+        let newAllusers: Array<{
+          id: string;
+          username: string;
+        }> = [];
+        for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
+          newAllusers.push({
+            id: lobbyData?.getLobbyDetails[i]?.userId,
+            username: lobbyData?.getLobbyDetails[i]?.username,
+          });
+        }
+        await changeArray(newAllusers);
+        renderTable();
       }
-      setAllUsers(newAllusers);
-      renderTable();
-    }
+    };
+
+    renderEffectFunction();
   }, [lobbyLoading]);
+
+  useEffect(() => {
+    if (!loading) {
+      if (data === null || lobbyData === null) {
+        console.log("DASDASD");
+        setErrorMessage("Room Doesn't Exist.");
+        setShowModal(true);
+      }
+    }
+  }, [loading]);
 
   // socket.on("joined-room", function (data) {
   //   console.log("Total users");
@@ -120,7 +158,8 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   // });
 
   //MOst Probably problem is here
-  socket.on("someone-joined", function (data) {
+
+  socket.on("someone-joined", async function (data) {
     setTotalUsers(data.users);
 
     if (totalUsers > 2) {
@@ -130,26 +169,76 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       id: string;
       username: string;
     }> = [...allUsers, { id: data.id, username: data.username }];
+    await changeArray(newAllusers);
     console.log("New Users");
     console.log(newAllusers);
-    setAllUsers(newAllusers);
+
     renderTable();
   });
 
-  const handleLeavingRoom = () => {};
   const startTheGame = () => {};
+
+  const sendToHomePage = () => {
+    setShowModal(false);
+    history.push("/");
+  };
+
+  const handleLeavingRoom = async () => {
+    socket.emit("leaveRoom", {
+      roomId: roomId,
+      users: totalUsers - 1,
+    });
+
+    setTotalUsers(totalUsers - 1);
+
+    if (data?.getRoomDetails?.adminSocketId === location.state.socketId) {
+      socket.emit("throw-all-users-out-of-room", {
+        roomId: roomId,
+      });
+    }
+
+    const values = {
+      id: location.state.socketId,
+      roomCode: roomId,
+    };
+
+    await leaveRoom({ variables: values });
+  };
+
+  socket.on("throw-room-recieved", function (data) {
+    console.log("THROW DATA RECIEVED");
+    console.log(data);
+  });
 
   // useEffect(() => {
   //   renderTable();
   // }, []);
 
   //renderTable();
-  console.log(lobbyData);
+  //console.log(lobbyData);
   // console.log(dom_content);
   return (
     <>
       {!loading && !lobbyLoading ? (
-        <div>
+        <>
+          <Modal show={showModal}>
+            <Modal.Dialog>
+              <Modal.Header>
+                <Modal.Title>Error..!!</Modal.Title>
+              </Modal.Header>
+
+              <Modal.Body>
+                <p>{errorMessage}</p>
+              </Modal.Body>
+
+              <Modal.Footer>
+                <Button variant="primary" onClick={sendToHomePage}>
+                  Go To Home Page
+                </Button>
+              </Modal.Footer>
+            </Modal.Dialog>
+          </Modal>
+
           <h3>Game Lobby Users</h3>
           <div className="display: inline">
             <span className="float: right">
@@ -178,7 +267,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
               </Row>
             </Container>
           </div>
-        </div>
+        </>
       ) : (
         <Spinner animation="border" variant="dark" />
       )}

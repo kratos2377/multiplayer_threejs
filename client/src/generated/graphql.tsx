@@ -42,6 +42,7 @@ export type Mutation = {
   createUser: Scalars["Boolean"];
   destroyRoomAndLobby: Scalars["Boolean"];
   joinRoom: RoomUserResponse;
+  leaveRoom: Scalars["Boolean"];
 };
 
 export type MutationCreateRoomArgs = {
@@ -62,6 +63,11 @@ export type MutationJoinRoomArgs = {
   roomCode: Scalars["String"];
   userId: Scalars["String"];
   username: Scalars["String"];
+};
+
+export type MutationLeaveRoomArgs = {
+  id: Scalars["String"];
+  roomCode: Scalars["String"];
 };
 
 export type Query = {
@@ -205,6 +211,13 @@ export type JoinRoomMutation = {
       | undefined;
   };
 };
+
+export type LeaveRoomMutationVariables = Exact<{
+  id: Scalars["String"];
+  roomCode: Scalars["String"];
+}>;
+
+export type LeaveRoomMutation = { __typename?: "Mutation"; leaveRoom: boolean };
 
 export type NumberOfUsersInRoomQueryVariables = Exact<{
   roomCode: Scalars["String"];
@@ -393,6 +406,54 @@ export type JoinRoomMutationResult = Apollo.MutationResult<JoinRoomMutation>;
 export type JoinRoomMutationOptions = Apollo.BaseMutationOptions<
   JoinRoomMutation,
   JoinRoomMutationVariables
+>;
+export const LeaveRoomDocument = gql`
+  mutation LeaveRoom($id: String!, $roomCode: String!) {
+    leaveRoom(id: $id, roomCode: $roomCode)
+  }
+`;
+export type LeaveRoomMutationFn = Apollo.MutationFunction<
+  LeaveRoomMutation,
+  LeaveRoomMutationVariables
+>;
+
+/**
+ * __useLeaveRoomMutation__
+ *
+ * To run a mutation, you first call `useLeaveRoomMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLeaveRoomMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [leaveRoomMutation, { data, loading, error }] = useLeaveRoomMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      roomCode: // value for 'roomCode'
+ *   },
+ * });
+ */
+export function useLeaveRoomMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    LeaveRoomMutation,
+    LeaveRoomMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<LeaveRoomMutation, LeaveRoomMutationVariables>(
+    LeaveRoomDocument,
+    options
+  );
+}
+export type LeaveRoomMutationHookResult = ReturnType<
+  typeof useLeaveRoomMutation
+>;
+export type LeaveRoomMutationResult = Apollo.MutationResult<LeaveRoomMutation>;
+export type LeaveRoomMutationOptions = Apollo.BaseMutationOptions<
+  LeaveRoomMutation,
+  LeaveRoomMutationVariables
 >;
 export const NumberOfUsersInRoomDocument = gql`
   query NumberOfUsersInRoom($roomCode: String!) {
@@ -778,6 +839,38 @@ export default {
               },
               {
                 name: "username",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+            ],
+          },
+          {
+            name: "leaveRoom",
+            type: {
+              kind: "NON_NULL",
+              ofType: {
+                kind: "SCALAR",
+                name: "Any",
+              },
+            },
+            args: [
+              {
+                name: "id",
+                type: {
+                  kind: "NON_NULL",
+                  ofType: {
+                    kind: "SCALAR",
+                    name: "Any",
+                  },
+                },
+              },
+              {
+                name: "roomCode",
                 type: {
                   kind: "NON_NULL",
                   ofType: {

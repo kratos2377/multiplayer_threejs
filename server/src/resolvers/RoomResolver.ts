@@ -60,7 +60,7 @@ export class RoomResolver {
   ): Promise<RoomResponse> {
     console.log(adminId);
     let hashString =
-      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$&#";
+      "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@$&";
 
     let len = hashString.length;
     var ans: string = "";
@@ -74,7 +74,6 @@ export class RoomResolver {
       var room = (await Room.findOne({ where: { id: ans } })) as Room;
 
       if (!room) {
-        console.log(ans);
         break;
       }
       ans = "";
