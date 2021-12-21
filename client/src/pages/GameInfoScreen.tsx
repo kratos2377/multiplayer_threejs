@@ -44,6 +44,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       username: string;
     }>
   >([]);
+  //{ id: location.state.socketId, username: location.state.username }
   const { data, error, loading } = useRoomDetailsQuery({
     variables: {
       roomCode: roomId,
@@ -72,26 +73,20 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
   console.log("TIMES");
 
-  const changeArray = async (
-    newAllusers: Array<{
-      id: string;
-      username: string;
-    }>
+  const renderTable = async (
+    users: Array<{ id: string; username: string }>
   ) => {
-    setAllUsers(newAllusers);
-  };
-
-  const renderTable = () => {
     let dom_content_copy: JSX.Element[] = [];
-    for (var i = 0; i < allUsers.length; i += 2) {
+    console.log("Render Function Executed");
+    for (var i = 0; i < users.length; i += 2) {
       dom_content_copy.push(
         <tr>
           <td>
-            {i + 1} {` ${allUsers[i].username}`}{" "}
+            {i + 1} {` ${users[i].username}`}{" "}
           </td>
-          {i + 1 < allUsers.length ? (
+          {i + 1 < users.length ? (
             <td>
-              {i + 2} {` ${allUsers[i + 1].username}`}
+              {i + 2} {` ${users[i + 1].username}`}
             </td>
           ) : (
             <td></td>
@@ -99,8 +94,9 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
         </tr>
       );
     }
-    // console.log("DOM CONTENT");
-    // console.log(dom_content_copy);
+    console.log("DOM CONTENT");
+    console.log(users);
+    console.log(dom_content_copy);
 
     setDomContent(dom_content_copy);
   };
@@ -114,33 +110,34 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   });
 
   useEffect(() => {
-    const renderEffectFunction = async () => {
-      if (!lobbyLoading && lobbyData) {
-        console.log(lobbyData);
-        console.log(location.state.username);
-        socket.emit("joinRoom", {
-          roomId: roomId,
-          users: lobbyData?.getLobbyDetails?.length,
+    if (!lobbyLoading && lobbyData) {
+      console.log(lobbyData);
+      console.log(location.state.username);
+      socket.emit("joinRoom", {
+        roomId: roomId,
+        users: lobbyData?.getLobbyDetails?.length,
+      });
+
+      setTotalUsers(lobbyData?.getLobbyDetails?.length);
+      let newAllusers: Array<{
+        id: string;
+        username: string;
+      }> = [];
+      for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
+        newAllusers.push({
+          id: lobbyData?.getLobbyDetails[i]?.userId,
+          username: lobbyData?.getLobbyDetails[i]?.username,
         });
-
-        setTotalUsers(lobbyData?.getLobbyDetails?.length);
-        let newAllusers: Array<{
-          id: string;
-          username: string;
-        }> = [];
-        for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
-          newAllusers.push({
-            id: lobbyData?.getLobbyDetails[i]?.userId,
-            username: lobbyData?.getLobbyDetails[i]?.username,
-          });
-        }
-        await changeArray(newAllusers);
-        renderTable();
       }
-    };
-
-    renderEffectFunction();
-  }, [lobbyLoading]);
+      console.log("Lobby Data");
+      console.log(lobbyData);
+      console.log(newAllusers);
+      setAllUsers(newAllusers);
+      setTimeout(() => {
+        renderTable(newAllusers);
+      }, 500);
+    }
+  }, [lobbyLoading, lobbyData, location.state]);
 
   useEffect(() => {
     if (!loading) {
@@ -169,11 +166,30 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       id: string;
       username: string;
     }> = [...allUsers, { id: data.id, username: data.username }];
-    await changeArray(newAllusers);
+    setAllUsers(newAllusers);
     console.log("New Users");
     console.log(newAllusers);
 
-    renderTable();
+    setTimeout(() => {
+      renderTable(newAllusers);
+    }, 500);
+  });
+
+  socket.on("someone-leaved", async function (data) {
+    let newAllusers: Array<{
+      id: string;
+      username: string;
+    }> = [...allUsers];
+
+    setTotalUsers(data.users);
+
+    let newA = newAllusers.filter((ele) => ele.id !== data.id);
+
+    setAllUsers(newA);
+
+    setTimeout(() => {
+      renderTable(newA);
+    }, 500);
   });
 
   const startTheGame = () => {};
@@ -190,7 +206,8 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     });
 
     setTotalUsers(totalUsers - 1);
-
+    console.log("Socket Id");
+    console.log(data?.getRoomDetails?.adminSocketId);
     if (data?.getRoomDetails?.adminSocketId === location.state.socketId) {
       socket.emit("throw-all-users-out-of-room", {
         roomId: roomId,
@@ -203,11 +220,15 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     };
 
     await leaveRoom({ variables: values });
+
+    history.push("/");
   };
 
   socket.on("throw-room-recieved", function (data) {
-    console.log("THROW DATA RECIEVED");
-    console.log(data);
+    setShowModal(true);
+    setErrorMessage(
+      "It Seems like the Admin Destroyed the lobby. Go to Home Page to join a new One or create a new one"
+    );
   });
 
   // useEffect(() => {
@@ -217,6 +238,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   //renderTable();
   //console.log(lobbyData);
   // console.log(dom_content);
+  console.log(location.state.socketId);
   return (
     <>
       {!loading && !lobbyLoading ? (

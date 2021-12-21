@@ -105,10 +105,10 @@ const main = async () => {
 
     socket.on("joinRoom", function (data) {
       socket.join(data.roomId);
-      console.log("Room Id to be joined");
-      console.log(data.roomId);
-      console.log(socket.id);
-      console.log(socket.username);
+      // console.log("Room Id to be joined");
+      // console.log(data.roomId);
+      // console.log(socket.id);
+      // console.log(socket.username);
       socket.broadcast.to(data.roomId).emit("someone-joined", {
         id: socket.id,
         username: socket.username,
