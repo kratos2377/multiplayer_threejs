@@ -71,13 +71,10 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     },
   });
 
-  console.log("TIMES");
-
   const renderTable = async (
     users: Array<{ id: string; username: string }>
   ) => {
     let dom_content_copy: JSX.Element[] = [];
-    console.log("Render Function Executed");
     for (var i = 0; i < users.length; i += 2) {
       dom_content_copy.push(
         <tr>
@@ -94,9 +91,6 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
         </tr>
       );
     }
-    console.log("DOM CONTENT");
-    console.log(users);
-    console.log(dom_content_copy);
 
     setDomContent(dom_content_copy);
   };
@@ -111,8 +105,6 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
   useEffect(() => {
     if (!lobbyLoading && lobbyData) {
-      console.log(lobbyData);
-      console.log(location.state.username);
       socket.emit("joinRoom", {
         roomId: roomId,
         users: lobbyData?.getLobbyDetails?.length,
@@ -129,9 +121,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
           username: lobbyData?.getLobbyDetails[i]?.username,
         });
       }
-      console.log("Lobby Data");
-      console.log(lobbyData);
-      console.log(newAllusers);
+
       setAllUsers(newAllusers);
       setTimeout(() => {
         renderTable(newAllusers);
@@ -142,17 +132,11 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   useEffect(() => {
     if (!loading) {
       if (data === null || lobbyData === null) {
-        console.log("DASDASD");
         setErrorMessage("Room Doesn't Exist.");
         setShowModal(true);
       }
     }
   }, [loading]);
-
-  // socket.on("joined-room", function (data) {
-  //   console.log("Total users");
-  //   console.log(socket);
-  // });
 
   //MOst Probably problem is here
 
@@ -167,8 +151,6 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       username: string;
     }> = [...allUsers, { id: data.id, username: data.username }];
     setAllUsers(newAllusers);
-    console.log("New Users");
-    console.log(newAllusers);
 
     setTimeout(() => {
       renderTable(newAllusers);
@@ -206,8 +188,6 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     });
 
     setTotalUsers(totalUsers - 1);
-    console.log("Socket Id");
-    console.log(data?.getRoomDetails?.adminSocketId);
     if (data?.getRoomDetails?.adminSocketId === location.state.socketId) {
       socket.emit("throw-all-users-out-of-room", {
         roomId: roomId,
@@ -235,10 +215,6 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   //   renderTable();
   // }, []);
 
-  //renderTable();
-  //console.log(lobbyData);
-  // console.log(dom_content);
-  console.log(location.state.socketId);
   return (
     <>
       {!loading && !lobbyLoading ? (

@@ -26,17 +26,15 @@ const main = async () => {
 
   await createConnection({
     type: "postgres",
-    database: "multiplayer",
-    username: "postgres",
-    password: "postgres",
+    url: process.env.DATABASE_URL,
     logging: true,
     synchronize: true,
     entities: [User, Lobby, Room],
-    // extra: {
-    //   ssl: {
-    //     rejectUnauthorized: false,
-    //   },
-    // },
+    extra: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
   });
 
   const app = Express();

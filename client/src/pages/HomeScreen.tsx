@@ -29,7 +29,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
   const [joinRoomMutation] = useJoinRoomMutation();
   socket.on("setId", function (data) {
     setSocketId(data.id);
-    console.log(socket);
   });
 
   const changeCreateRoomStatus = () => setOpenCreateRoom(true);
@@ -72,6 +71,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
 
     if (username.trim() === "" || username.length <= 4) {
       setErrorMessage("Username Length must be greater than 4");
+      setError(true);
+      return;
+    }
+
+    if (code.trim() === "" || code.length < 4) {
+      setErrorMessage("Code Tera baap enter krega. HA bol na MC!");
       setError(true);
       return;
     }
