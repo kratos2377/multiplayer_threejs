@@ -44,7 +44,10 @@ const main = async () => {
 
   app.use(
     cors({
-      origin: ["http://localhost:3000"],
+      origin: [
+        "http://localhost:3000",
+        "https://keen-leavitt-c423c3.netlify.app/",
+      ],
       credentials: true,
     })
   );
@@ -85,7 +88,10 @@ const main = async () => {
   );
   const io = require("socket.io")(httpServer, {
     cors: {
-      origin: ["https://localhost:3000"],
+      origin: [
+        "https://localhost:3000",
+        "https://keen-leavitt-c423c3.netlify.app/",
+      ],
     },
   });
   // console.log("THIS IS IO");

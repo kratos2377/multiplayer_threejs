@@ -37,5 +37,8 @@
     "watch": "tsc -w",
     "typeorm:migration:gen": "ts-node ./node_modules/typeorm/cli.js migration:generate --name",
     "typeorm:migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run"
+  },
+  "engines": {
+    "node": "14.15.4"
   }
 }
